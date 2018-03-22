@@ -5,11 +5,13 @@ dependencies {
 }
 
 task buildZip(type: Zip) {
+
     from compileJava
     from processResources              
     into('lib') {
         from configurations.runtime
-    }           
+    }
+    archiveName 'cnmToGranule-1.0.zip'           
 }
 
 build.dependsOn buildZip

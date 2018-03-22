@@ -163,12 +163,15 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	    System.out.println(uri);
 	    String path = uri.replace("s3://", "");
 	    String bucket = path.substring(0, path.indexOf("/")); 
+	    //TODO What if there is no / in the path name?
+ 	    String url_path = path.substring(path.indexOf("/")+1, path.lastIndexOf("/")); 
+	    
 	    
 	    //iterate here to create multiple files
 		JsonObject granuleFile = new JsonObject();
 		granuleFile.addProperty("name", cnmFile.get("name").getAsString());
+		granuleFile.addProperty("path", url_path);
 		granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
-		granuleFile.addProperty("path", cnmFile.get("uri").getAsString());
 		granuleFile.addProperty("bucket", bucket);
 		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
