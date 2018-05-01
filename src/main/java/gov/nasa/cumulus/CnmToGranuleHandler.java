@@ -153,6 +153,13 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	    JsonObject granule = new JsonObject();
 	    
 	    String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
+	    if(granuleId.contains("/"));
+	    	granuleId = granuleId.substring(granuleId.indexOf("/")+1);
+	    
+	    if(granuleId.endsWith(".h5"))
+	    	granuleId = granuleId.replace(".h5", "");
+	    
+	    
 	    JsonObject cnmFile = (JsonObject) cnmObject.getAsJsonObject("product").getAsJsonArray("files").get(0);
 	    
 	    JsonArray files = new JsonArray();
@@ -181,11 +188,17 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	    JsonObject output = new JsonObject();
 	    JsonArray granuleArray= new JsonArray();
 	    granuleArray.add(granule);
-	    output.add("granules", granuleArray);
 	    
-	    System.out.println("Finished...");
+	    //We need to write out the original CNM message so that we register it for later use.
+	    output.add("cnm", cnmObject);
+	    JsonObject granuleOutput = new JsonObject();
+	    granuleOutput.add("granules", granuleArray);
+	    output.add("output", granuleOutput);
 	    
-		return new Gson().toJson(output);
+	    String outp = new Gson().toJson(output);
+	    System.out.println(outp);
+	    
+		return outp;
 		
 	}
 
