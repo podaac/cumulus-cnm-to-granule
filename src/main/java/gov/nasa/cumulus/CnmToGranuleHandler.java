@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.commons.io.IOUtils;
 
@@ -189,8 +193,15 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	    JsonArray granuleArray= new JsonArray();
 	    granuleArray.add(granule);
 	    
+	    TimeZone tz = TimeZone.getTimeZone("UTC");
+	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+	    df.setTimeZone(tz);
+	    String nowAsISO = df.format(new Date());
+	    cnmObject.addProperty("receivedTime", nowAsISO);
+
 	    //We need to write out the original CNM message so that we register it for later use.
 	    output.add("cnm", cnmObject);
+	    
 	    JsonObject granuleOutput = new JsonObject();
 	    granuleOutput.add("granules", granuleArray);
 	    output.add("output", granuleOutput);
