@@ -184,7 +184,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granuleFile.addProperty("path", url_path);
 		granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
 		granuleFile.addProperty("bucket", bucket);
-		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
+		granuleFile.addProperty("fileSize", cnmFile.get("size").getAsLong());
 		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 	    
 		files.add(granuleFile);
