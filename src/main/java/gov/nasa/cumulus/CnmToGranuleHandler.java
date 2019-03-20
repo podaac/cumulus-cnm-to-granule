@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -141,7 +143,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 	public String PerformFunction(String input, Context context) throws Exception {
 		System.out.println("Processing " + input);
-		
+
 		//convert CNM to GranuleObject
 		JsonElement jelement = new JsonParser().parse(input);
 		JsonObject inputKey = jelement.getAsJsonObject();
@@ -151,15 +153,20 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	    //JsonObject  cnmObject = jelement.getAsJsonObject();
 		
 	    JsonObject granule = new JsonObject();
-	    
+
+		// Parse config values
+		JsonObject config = inputKey.getAsJsonObject("config");
+		String granuleIdExtraction = config.getAsJsonObject("collection").get("granuleIdExtraction").getAsString();
+
 	    String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
 	    if(granuleId.contains("/"));
 	    	granuleId = granuleId.substring(granuleId.indexOf("/")+1);
-	    
-	    if(granuleId.endsWith(".h5"))
-	    	granuleId = granuleId.replace(".h5", "");
-	    
-	    
+        Pattern pattern = Pattern.compile(granuleIdExtraction);
+        Matcher matcher = pattern.matcher(granuleId);
+        if (matcher.find()) {
+            granuleId = matcher.group(1);
+        }
+
 	    JsonObject cnmFile = (JsonObject) cnmObject.getAsJsonObject("product").getAsJsonArray("files").get(0);
 	    
 	    JsonArray files = new JsonArray();
@@ -180,7 +187,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granuleFile.addProperty("path", url_path);
 		granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
 		granuleFile.addProperty("bucket", bucket);
-		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
+		//granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 		granuleFile.addProperty("fileSize", cnmFile.get("size").getAsLong());
 	    
 		files.add(granuleFile);
