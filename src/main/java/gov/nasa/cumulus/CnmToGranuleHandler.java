@@ -129,6 +129,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
             "time": 1485129600000,
             "path": "allData/ghrsst/data/GDS2/L2P/MODIS_T/JPL/v2014.0/2017/023/",
             "url_path": "",
+	    "fileType": "data",
             "size": 23304519
           }
         ]
@@ -182,7 +183,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granuleFile.addProperty("bucket", bucket);
 		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 		granuleFile.addProperty("fileSize", cnmFile.get("size").getAsLong());
-	    
+		granuleFile.addPropert("fileType", cnmFile.get("type").getAsString());
+
 		files.add(granuleFile);
 		granule.add("files", files);
 	    JsonObject output = new JsonObject();
