@@ -131,6 +131,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
             "time": 1485129600000,
             "path": "allData/ghrsst/data/GDS2/L2P/MODIS_T/JPL/v2014.0/2017/023/",
             "url_path": "",
+	        "fileType": "data",
             "fileSize": 23304519,
             "checksumType": "md5",
             "checksumValue": "123454321abc"
@@ -194,6 +195,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granuleFile.addProperty("checksumType", cnmFile.has("checksumType") ? cnmFile.get("checksumType").getAsString() : "md5");
 		granuleFile.addProperty("checksumValue", cnmFile.get("checksum").getAsString());
 	    
+		granuleFile.addProperty("fileType", cnmFile.get("type").getAsString());
+
 		files.add(granuleFile);
 		granule.add("files", files);
 	    JsonObject output = new JsonObject();
