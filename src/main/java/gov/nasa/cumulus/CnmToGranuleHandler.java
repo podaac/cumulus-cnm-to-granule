@@ -192,7 +192,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granuleFile.addProperty("bucket", bucket);
 		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 		granuleFile.addProperty("checksumType", cnmFile.has("checksumType") ? cnmFile.get("checksumType").getAsString() : "md5");
-		granuleFile.addProperty("checksumValue", cnmFile.get("checksum").getAsString());
+		granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
 		granuleFile.addProperty("type", cnmFile.get("type").getAsString());
 
 		files.add(granuleFile);
