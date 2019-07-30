@@ -1,0 +1,69 @@
+{
+  "input": {
+    "version": "v1.0",
+    "provider": "PODAAC",
+    "deliveryTime": "2018-03-12T16:50:23.458100",
+    "collection": "L2_HR_LAKE_AVG",
+    "identifier": "c5c828ac328c97b5d3d1036d08898b30-12",
+    "product": {
+      "name": "L2_HR_LAKE_AVG/product_0001-of-0019.h5",
+      "dataVersion": "1",
+      "files": [
+        {
+          "type": "data",
+          "uri": "s3://podaac-dev-cumulus-test-input/L2_HR_LAKE_AVG/product_0001-of-0019.h5",
+          "name": "product_0001-of-0019.h5",
+          "checksumType": "md5",
+          "checksum": "123454321abc",
+          "size": 96772640
+        },
+        {
+          "type": "metadata",
+          "uri": "s3://podaac-dev-cumulus-test-input/L2_HR_LAKE_AVG/product_0001-of-0019.h5.iso.xml",
+          "name": "product_0001-of-0019.h5.iso.xml",
+          "size": 141205
+        }
+      ]
+    }
+  },
+  "config": {
+    "collection": {
+      "files": [
+        {
+          "regex": ".*.h5$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0050.h5",
+          "type": "data",
+          "bucket": "protected"
+        },
+        {
+          "regex": ".*.iso.xml$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0019.iso.xml",
+          "type": "metadata",
+          "bucket": "protected"
+        },
+        {
+          "regex": ".*.cmr.json$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0019.cmr.json",
+          "type": "metadata",
+          "bucket": "public"
+        }
+      ],
+      "name": "L2_HR_LAKE_AVG",
+      "granuleIdExtraction": "^(.*)((\\.cmr\\.json)|(\\.h5)|(\\.h5\\.mp))$",
+      "granuleId": "^.*$",
+      "dataType": "L2_HR_LAKE_AVG",
+      "provider_path": "L2_HR_LAKE_AVG/",
+      "version": "1",
+      "updatedAt": 1552434051881,
+      "duplicateHandling": "replace",
+      "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0050.h5",
+      "createdAt": 1552434051881,
+      "meta": {
+        "required-files": [
+          ".*.h5$",
+          ".*.iso.xml$"
+        ]
+      }
+    }
+  }
+}

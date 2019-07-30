@@ -59,7 +59,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 			  +"},"
 			  + "\"config\": {}"
 			  +"}";
-		
+
 		String output = c.PerformFunction(input, null);
 		System.out.println(output);
     }
@@ -176,32 +176,36 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
             granuleId = matcher.group(1);
         }
 
-	    JsonObject cnmFile = (JsonObject) cnmObject.getAsJsonObject("product").getAsJsonArray("files").get(0);
-	    
 	    JsonArray files = new JsonArray();
 	    granule.addProperty("granuleId", granuleId);
-	    
-	    
-	    String uri = cnmFile.get("uri").getAsString();
-	    System.out.println(uri);
-	    String path = uri.replace("s3://", "");
-	    String bucket = path.substring(0, path.indexOf("/")); 
-	    //TODO What if there is no / in the path name?
- 	    String url_path = path.substring(path.indexOf("/")+1, path.lastIndexOf("/")); 
-	    
-	    
-	    //iterate here to create multiple files
-		JsonObject granuleFile = new JsonObject();
-		granuleFile.addProperty("name", cnmFile.get("name").getAsString());
-		granuleFile.addProperty("path", url_path);
-		granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
-		granuleFile.addProperty("bucket", bucket);
-		granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
-		granuleFile.addProperty("checksumType", cnmFile.has("checksumType") ? cnmFile.get("checksumType").getAsString() : "md5");
-		granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
-		granuleFile.addProperty("type", cnmFile.get("type").getAsString());
 
-		files.add(granuleFile);
+		JsonArray inputFiles = cnmObject.getAsJsonObject("product").getAsJsonArray("files");
+		for (JsonElement file: inputFiles) {
+			JsonObject cnmFile = file.getAsJsonObject();
+
+			String uri = cnmFile.get("uri").getAsString();
+			System.out.println(uri);
+			String path = uri.replace("s3://", "");
+			String bucket = path.substring(0, path.indexOf("/"));
+			//TODO What if there is no / in the path name?
+			String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
+
+			JsonObject granuleFile = new JsonObject();
+			granuleFile.addProperty("name", cnmFile.get("name").getAsString());
+			granuleFile.addProperty("path", url_path);
+			granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
+			granuleFile.addProperty("bucket", bucket);
+			granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
+			if (cnmFile.has("checksumType")) {
+				granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
+			}
+			if (cnmFile.has("checksum")) {
+				granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
+			}
+			granuleFile.addProperty("type", cnmFile.get("type").getAsString());
+
+			files.add(granuleFile);
+		}
 		granule.add("files", files);
 	    JsonObject output = new JsonObject();
 	    JsonArray granuleArray= new JsonArray();
