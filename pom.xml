@@ -13,8 +13,15 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  <repositories>
+    <repository>
+      <id>clojars.org</id>
+      <url>https://repo.clojars.org</url>
+    </repository>
+  </repositories>
 
-  <dependencies>
+
+<dependencies>
 
 <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 <dependency>
@@ -25,7 +32,7 @@
 <dependency>
   <groupId>gov.nasa.earthdata</groupId>
   <artifactId>cumulus-message-adapter</artifactId>
-  <version>1.2.8</version>
+  <version>1.2.10</version>
 </dependency>
 <dependency>
     <groupId>com.amazonaws</groupId>
