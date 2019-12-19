@@ -30,41 +30,6 @@ import cumulus_message_adapter.message_parser.MessageParser;
 
 public class CnmToGranuleHandler implements  ITask, RequestHandler<String, String>{
 
-	public static void main( String[] args ) throws Exception
-    {
-		CnmToGranuleHandler c = new CnmToGranuleHandler();
-		
-		String input = "{"
-			+"\"input\":{"
-			 +" \"version\":\"v1.0\","
-			 +" \"provider\": \"PODAAC\","
-			  +"\"deliveryTime\":\"2018-03-12T16:50:23.458100\","
-			  +"\"collection\": \"L2_HR_LAKE_AVG\","
-			  +"\"identifier\": \"c5c828ac328c97b5d3d1036d08898b30-12\","
-			  +"\"product\":"
-			  +"  {"
-			  +"    \"name\": \"L2_HR_LAKE_AVG/product_0001-of-0019.h5\","
-			  +"    \"dataVersion\": \"1\","
-			  +"    \"files\": ["
-			  +"      {"
-			  +"        \"type\": \"data\","
-			  +"        \"uri\": \"s3://podaac-dev-cumulus-test-input/L2_HR_LAKE_AVG/product_0001-of-0019.h5\","
-			  +"        \"name\":\"product_0001-of-0019.h5\","
-			  +"        \"checksumType\": \"md5\","
-			  +"        \"checksum\": \"123454321abc\","
-			  +"        \"size\": 96772640"
-			  +"      }"
-			  +"    ]"
-			  +"  }"
-			  +"},"
-			  + "\"config\": {}"
-			  +"}";
-
-		String output = c.PerformFunction(input, null);
-		System.out.println(output);
-    }
-
-
 	public String handleRequest(String input, Context context) {
 		MessageParser parser = new MessageParser();
 		try
@@ -76,30 +41,19 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 			return e.getMessage();
 		}
 	}
-	
-	public void handleRequestStreams(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
 
+	public void handleRequestStreams(InputStream inputStream, OutputStream outputStream, Context context) throws IOException, MessageAdapterException {
 		MessageParser parser = new MessageParser();
 
-		try
-		{
-			String input =IOUtils.toString(inputStream, "UTF-8");
-			context.getLogger().log(input);
-			String output = parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
-			System.out.println("Output: " + output);
-			//return parser.HandleMessage(input, context, new MetadataAggregatorLambda(), null);
-			outputStream.write(output.getBytes(Charset.forName("UTF-8")));
-		}
-		catch(MessageAdapterException e)
-		{
-			e.printStackTrace();
-			outputStream.write(e.getMessage().getBytes(Charset.forName("UTF-8")));
-		}
-
+		String input =IOUtils.toString(inputStream, "UTF-8");
+		context.getLogger().log(input);
+		String output = parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
+		System.out.println("Output: " + output);
+		outputStream.write(output.getBytes(Charset.forName("UTF-8")));
 	}
 
 	/*
-	 * 
+	 *
 {
   "version":"v1.0",
   "provider": "PODAAC",
@@ -123,7 +77,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
     }
 }
 	 */
-	
+
 	/*
 	 * Payload:
 {
@@ -146,9 +100,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
       }
     ]
   }
-	 * 
+	 *
 	 */
-	
 
 	public String PerformFunction(String input, Context context) throws Exception {
 		System.out.println("Processing " + input);
@@ -156,28 +109,25 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		//convert CNM to GranuleObject
 		JsonElement jelement = new JsonParser().parse(input);
 		JsonObject inputKey = jelement.getAsJsonObject();
-		
+
 		JsonObject  cnmObject =inputKey.getAsJsonObject("input");
-		
-	    //JsonObject  cnmObject = jelement.getAsJsonObject();
-		
-	    JsonObject granule = new JsonObject();
+
+	  JsonObject granule = new JsonObject();
 
 		// Parse config values
 		JsonObject config = inputKey.getAsJsonObject("config");
 		String granuleIdExtraction = config.getAsJsonObject("collection").get("granuleIdExtraction").getAsString();
 
-	    String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
-	    if(granuleId.contains("/"));
-	    	granuleId = granuleId.substring(granuleId.indexOf("/")+1);
-        Pattern pattern = Pattern.compile(granuleIdExtraction);
-        Matcher matcher = pattern.matcher(granuleId);
-        if (matcher.find()) {
-            granuleId = matcher.group(1);
-        }
+		String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
+		granuleId = granuleId.substring(granuleId.indexOf("/")+1);
+		Pattern pattern = Pattern.compile(granuleIdExtraction);
+		Matcher matcher = pattern.matcher(granuleId);
+		if (matcher.find()) {
+			granuleId = matcher.group(1);
+		}
 
-	    JsonArray files = new JsonArray();
-	    granule.addProperty("granuleId", granuleId);
+		JsonArray files = new JsonArray();
+		granule.addProperty("granuleId", granuleId);
 
 		JsonArray inputFiles = cnmObject.getAsJsonObject("product").getAsJsonArray("files");
 		for (JsonElement file: inputFiles) {
@@ -206,29 +156,30 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 			files.add(granuleFile);
 		}
-		granule.add("files", files);
-	    JsonObject output = new JsonObject();
-	    JsonArray granuleArray= new JsonArray();
-	    granuleArray.add(granule);
-	    
-	    TimeZone tz = TimeZone.getTimeZone("UTC");
-	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-	    df.setTimeZone(tz);
-	    String nowAsISO = df.format(new Date());
-	    cnmObject.addProperty("receivedTime", nowAsISO);
 
-	    //We need to write out the original CNM message so that we register it for later use.
-	    output.add("cnm", cnmObject);
-	    
-	    JsonObject granuleOutput = new JsonObject();
-	    granuleOutput.add("granules", granuleArray);
-	    output.add("output", granuleOutput);
-	    
-	    String outp = new Gson().toJson(output);
-	    System.out.println(outp);
-	    
+		granule.add("files", files);
+
+		JsonObject output = new JsonObject();
+		JsonArray granuleArray= new JsonArray();
+		granuleArray.add(granule);
+
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+		df.setTimeZone(tz);
+		String nowAsISO = df.format(new Date());
+		cnmObject.addProperty("receivedTime", nowAsISO);
+
+		//We need to write out the original CNM message so that we register it for later use.
+		output.add("cnm", cnmObject);
+
+		JsonObject granuleOutput = new JsonObject();
+		granuleOutput.add("granules", granuleArray);
+		output.add("output", granuleOutput);
+
+		String outp = new Gson().toJson(output);
+		System.out.println(outp);
+
 		return outp;
-		
 	}
 
 }
