@@ -26,18 +26,21 @@ import com.google.gson.JsonParser;
 import cumulus_message_adapter.message_parser.ITask;
 import cumulus_message_adapter.message_parser.MessageAdapterException;
 import cumulus_message_adapter.message_parser.MessageParser;
-
+import cumulus_message_adapter.message_parser.AdapterLogger;
 
 public class CnmToGranuleHandler implements  ITask, RequestHandler<String, String>{
+	String className = this.getClass().getName();
 
 	public String handleRequest(String input, Context context) {
 		MessageParser parser = new MessageParser();
 		try
 		{
+			AdapterLogger.LogInfo(this.className + "handleRequest Input: " + input);
 			return parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
 		}
 		catch(MessageAdapterException e)
 		{
+			AdapterLogger.LogError(this.className + "handleRequest Error: " + e.getMessage());
 			return e.getMessage();
 		}
 	}
@@ -46,9 +49,9 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		MessageParser parser = new MessageParser();
 
 		String input =IOUtils.toString(inputStream, "UTF-8");
-		context.getLogger().log(input);
+		AdapterLogger.LogInfo(this.className + " Input: " + input);
 		String output = parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
-		System.out.println("Output: " + output);
+		AdapterLogger.LogInfo(this.className + " Output: " + output);
 		outputStream.write(output.getBytes(Charset.forName("UTF-8")));
 	}
 
@@ -104,7 +107,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	 */
 
 	public String PerformFunction(String input, Context context) throws Exception {
-		System.out.println("Processing " + input);
+		AdapterLogger.LogInfo(this.className + " PerformFunction input: " + input);
 
 		//convert CNM to GranuleObject
 		JsonElement jelement = new JsonParser().parse(input);
@@ -112,7 +115,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 		JsonObject  cnmObject =inputKey.getAsJsonObject("input");
 
-	  JsonObject granule = new JsonObject();
+	  	JsonObject granule = new JsonObject();
 
 		// Parse config values
 		JsonObject config = inputKey.getAsJsonObject("config");
@@ -134,7 +137,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 			JsonObject cnmFile = file.getAsJsonObject();
 
 			String uri = cnmFile.get("uri").getAsString();
-			System.out.println(uri);
+			AdapterLogger.LogInfo(this.className + " uri: " + uri);
 			String path = uri.replace("s3://", "");
 			String bucket = path.substring(0, path.indexOf("/"));
 			//TODO What if there is no / in the path name?
@@ -177,7 +180,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		output.add("output", granuleOutput);
 
 		String outp = new Gson().toJson(output);
-		System.out.println(outp);
+		AdapterLogger.LogInfo(this.className + "output : " + outp);
 
 		return outp;
 	}
