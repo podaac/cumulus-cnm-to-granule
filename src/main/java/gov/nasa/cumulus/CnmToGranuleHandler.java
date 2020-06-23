@@ -35,12 +35,12 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		MessageParser parser = new MessageParser();
 		try
 		{
-			AdapterLogger.LogInfo(this.className + "handleRequest Input: " + input);
+			AdapterLogger.LogDebug(this.className + " handleRequest Input: " + input);
 			return parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
 		}
 		catch(MessageAdapterException e)
 		{
-			AdapterLogger.LogError(this.className + "handleRequest Error: " + e.getMessage());
+			AdapterLogger.LogError(this.className + " handleRequest Error: " + e.getMessage());
 			return e.getMessage();
 		}
 	}
@@ -49,9 +49,9 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		MessageParser parser = new MessageParser();
 
 		String input =IOUtils.toString(inputStream, "UTF-8");
-		AdapterLogger.LogInfo(this.className + " Input: " + input);
+		AdapterLogger.LogDebug(this.className + " Input: " + input);
 		String output = parser.RunCumulusTask(input, context, new CnmToGranuleHandler());
-		AdapterLogger.LogInfo(this.className + " Output: " + output);
+		AdapterLogger.LogDebug(this.className + " Output: " + output);
 		outputStream.write(output.getBytes(Charset.forName("UTF-8")));
 	}
 
@@ -107,7 +107,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 	 */
 
 	public String PerformFunction(String input, Context context) throws Exception {
-		AdapterLogger.LogInfo(this.className + " PerformFunction input: " + input);
+		AdapterLogger.LogDebug(this.className + " Entered PerformFunction");
 
 		//convert CNM to GranuleObject
 		JsonElement jelement = new JsonParser().parse(input);
@@ -180,7 +180,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		output.add("output", granuleOutput);
 
 		String outp = new Gson().toJson(output);
-		AdapterLogger.LogInfo(this.className + "output : " + outp);
+		AdapterLogger.LogDebug(this.className + " PerformFunction output : " + outp);
 
 		return outp;
 	}
