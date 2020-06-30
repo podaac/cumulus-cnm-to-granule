@@ -4,7 +4,7 @@
 
   <groupId>gov.nasa.cumulus</groupId>
   <artifactId>cnm-to-granule</artifactId>
-  <version>1.3.2-SNAPSHOT</version>
+  <version>1.3.2</version>
   <packaging>jar</packaging>
 
   <name>cnm-to-granule</name>
