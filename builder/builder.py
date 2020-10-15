@@ -132,6 +132,7 @@ def process(project_dir:str, artifact_base_name:str) -> None:
 
     # Clean up target directory
     os.system('chmod -R 777 {}'.format(release_dir))
+    os.system('chmod -R 777 {}'.format(os.path.join(project_dir, 'builder')))
     os.system('rm -Rf target')
     os.system('rm -Rf build')
 
