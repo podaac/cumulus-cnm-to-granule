@@ -2,8 +2,6 @@ import click
 import os
 import sys
 import logging
-from typing import Dict
-import urllib.parse as parse
 
 TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%S'
 SHORT_TIMESTAMP_FORMAT = '%Y-%m-%d'
@@ -52,35 +50,31 @@ class builder:
               help='artifact base name without .zip. Ex. cnmToGranule', required=True, type=str)
 def process(project_dir:str, artifact_base_name:str) -> None:
     '''
-        TODOS
-        * More logging , perhaps using logging package
-        * check -SNAPSHOT string before builder
-        check mvn test output has test complete
-        move build/distributions/xxxx.zip to the ~/releases directory
-
-        Modify pom <version>, tag, commit, push
-
+        this entire process is meant to run either through command line or inside a docker container
+        which contains java 8, python 3 , pipe and zip utilities.
+        The process will call a lot of os.system to similar command line maven and gradle build.
+        As well as manipulating pom file by reading and changing the <version>
+        As long as the version is ending with -SNAPSHOT, the build will be started
     '''
-    logger.debug('project directory:{}'.format('project_dir'))
-    logger.debug('artifact name: {}'.format(artifact_base_name))
+    logger.info('project directory:{}'.format('project_dir'))
+    logger.info('artifact name: {}'.format(artifact_base_name))
     builder_o = builder()
     mvn_executable:str = builder_o.find_executable('mvn')
     gradle_executable:str = builder_o.find_executable('gradle')
-    logger.debug('maven executable: {}'.format(mvn_executable))
-    logger.debug('gradle executable:{}'.format(gradle_executable))
+    logger.info('maven executable: {}'.format(mvn_executable))
+    logger.info('gradle executable:{}'.format(gradle_executable))
     os.system('pwd')
     os.chdir(project_dir)
     os.system('pwd')
     # zip and tar.gz the source before build
+    logger.info('Initial cleaning up directory')
     builder_o.clean_up(project_dir)
-    os.system('zip -r /tmp/source.zip . -x builder/\\* cache/\\* gradle/\\* release/\\* target/\\* build/\\* .git/\\*')
-    os.system('tar -cvf /tmp/source.tar.gz --exclude builder --exclude build --exclude target --exclude release --exclude cache --exclude gradle --exclude .git .')
     '''
         Read maven pom.xml <version>
     '''
     stream_pom_version = os.popen('mvn help:evaluate -Dexpression=project.version -q -DforceStdout')
     pom_version: str = stream_pom_version.read()
-    logger.debug('Read version from pom.xml:{}'.format(pom_version))
+    logger.info('Read version from pom.xml:{}'.format(pom_version))
     if pom_version.lower().find('snapshot') == -1:
         logger.info('There is no SNAPSHOT in pom version. Stopping build ...')
         exit(0)
@@ -93,53 +87,51 @@ def process(project_dir:str, artifact_base_name:str) -> None:
     os.system('{} clean'.format(mvn_executable))
     stream_mvn_test = os.popen('{} test'.format(mvn_executable))
     str_test_result: str = stream_mvn_test.read()
-    logger.debug('Entire MVN TEST output: {}'.format(str_test_result))
+    logger.info('Entire MVN TEST output: {}'.format(str_test_result))
     if str_test_result.find('Failures: 0') != -1:
         logger.info('MAVEN TEST SUCCEEDED.  Continue ...')
     else:
         logger.error('MAVEN TEST FAILURE.  Existing ...')
         exit(1)
     # Build artifact using maven and gradle commands
+    logger.info('Artifact is creating')
     os.system('mvn dependency:copy-dependencies')
     os.system('gradle -x test build')
+    logger.info('Artifact created')
     # Check if ./releases directory existed, otherwise, create
     release_dir: str = os.path.join(project_dir, 'release')
     if not os.path.isdir(release_dir):
         os.mkdir(release_dir)
+        logger.info('release directory created')
     # Move build artifact to release directory.
-    # move source.zip and source.tar.gz to release directory
+    logger.info('Moving built artifact to /release')
     build_zip:str = os.path.join(project_dir,'build/distributions/{}.zip'.format(artifact_base_name))
     release_zip:str = os.path.join(release_dir,artifact_base_name)
     release_zip = os.path.join(release_dir,'{}-{}.zip'.format(artifact_base_name, release_version))
     os.system('mv {} {}'.format(build_zip, release_zip))
-    release_source_zip:str = os.path.join(release_dir, 'source-{}.zip'.format(release_version))
-    release_source_targz: str = os.path.join(release_dir, 'source-{}.tar.gz'.format(release_version))
-    logger.debug('Release source zip:{}'.format(release_source_zip))
-    logger.debug('Release source tar.gz:{}'.format(release_source_targz))
-    os.system('mv /tmp/source.zip {}'.format(release_source_zip))
-    os.system('mv /tmp/source.tar.gz {}'.format(release_source_targz))
+    logger.info('finished moving built artifact to /release')
 
     # create version.txt
-    logger.debug('Opening and writing version.txt')
+    logger.info('Opening and writing version.txt with release version: '.format(release_version))
     f = open(os.path.join(release_dir,'version.txt'), "w")
     f.write(release_version)
     f.close()
+    logger.info('Version.txt created')
 
     # Modify the pom file and commit/push
+    logger.info('Modifying pom file version to : {}'.format(release_version))
     pom_modify_version:str = 'mvn versions:set -DnewVersion={} versions:commit'.format(release_version)
     os.system(pom_modify_version)
-    # os.system(XXXXXXXXXX) //TODOs
+    logger.info('Finished modifying pom file version to : {}'.format(release_version))
 
     # Clean up target directory
+    logger.info('Final cleaning up and openup directories')
     os.system('chmod -R 777 {}'.format(release_dir))
-    os.system('chmod -R 777 {}'.format(os.path.join(project_dir, 'builder')))
-    os.system('rm -Rf target')
-    os.system('rm -Rf build')
-
-
-    # to set new version :  mvn versions:set -DnewVersion=1.3.5 versions:commit
-    # above command using versions:commit to remove .versionBackup file
-
+    builder_o.clean_up(project_dir)
+    os.system('cd {}'.format(os.path.join(project_dir, 'builder')))
+    os.system('pwd')
+    os.system('chmod -Rf 777 *')
+    os.system('chmod -Rf 777 .*')
 
 if __name__ == '__main__':
     builder_obj:object = builder()
