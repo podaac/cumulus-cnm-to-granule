@@ -10,3 +10,5 @@ gradle build
 ```
 
 The build artifact will be generated in `build/distributions` and can be uploaded directly to AWS Lambda as the source code.
+A
+A
