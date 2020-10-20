@@ -1,8 +1,12 @@
 .classpath
 /target/
+release
 .project
 .settings
 .gradle
 .idea
 *.iml
 build
+.cache
+cache
+.m2
