@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- **PODAAC-2553**
+  - Upgrade aws s3 dependency to com.amazonaws:aws-java-sdk-s3@1.11.660 to fix Snyk errors
 
 ### Deprecated
 
