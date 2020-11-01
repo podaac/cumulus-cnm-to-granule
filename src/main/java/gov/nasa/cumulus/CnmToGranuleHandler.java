@@ -136,23 +136,23 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 		JsonArray inputFiles = cnmObject.getAsJsonObject("product").getAsJsonArray("files");
 		
-		// 'files' Json array does not exist. Initialize
+		// 'files' Json array does not exist. Assume CNM contains filegroups instead
 		if (inputFiles == null) {
 			inputFiles = new JsonArray();
+			
+			// Add files from each list of files in "filegroups"
+			StreamSupport.stream(cnmObject.getAsJsonObject("product")
+					.getAsJsonArray("filegroups")
+					.spliterator(), false
+			)
+					.flatMap(fs -> StreamSupport
+							.stream(fs.getAsJsonObject()
+									.getAsJsonArray("files")
+									.spliterator(), false
+							)
+					)
+					.forEach(inputFiles::add);
 		}
-		
-		// Add files from each list of files in "filegroups"
-		StreamSupport.stream(cnmObject.getAsJsonObject("product")
-				.getAsJsonArray("filegroups")
-				.spliterator(), false
-		)
-		.flatMap(fs -> StreamSupport
-				.stream(fs.getAsJsonObject()
-						.getAsJsonArray("files")
-						.spliterator(), false
-				)
-		)
-		.forEach(inputFiles::add);
 				
 		for (JsonElement file: inputFiles) {
 			JsonObject cnmFile = file.getAsJsonObject();
