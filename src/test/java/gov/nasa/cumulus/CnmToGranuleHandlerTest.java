@@ -80,4 +80,23 @@ public class CnmToGranuleHandlerTest
             e.printStackTrace();
         }
     }
+	
+	/**
+	 * Test that PerformFunction functions as expected when provided a CNM with filegroups
+	 */
+	public void testPerformFunctionFilegroups() throws Exception {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File inputJsonFile = new File(classLoader.getResource("inputFilegroups.json").getFile());
+		File expectedJsonFile = new File(classLoader.getResource("expectedFilegroups.json").getFile());
+		
+		String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+		String expected = new String(Files.readAllBytes(expectedJsonFile.toPath()));
+		JsonObject expectedJson = new JsonParser().parse(expected).getAsJsonObject();
+		
+		CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+		String output = cnmToGranuleHandler.PerformFunction(input, null);
+		JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+		
+		assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
+    }
 }

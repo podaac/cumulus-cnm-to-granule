@@ -13,6 +13,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -133,6 +135,25 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		granule.addProperty("granuleId", granuleId);
 
 		JsonArray inputFiles = cnmObject.getAsJsonObject("product").getAsJsonArray("files");
+		
+		// 'files' Json array does not exist. Assume CNM contains filegroups instead
+		if (inputFiles == null) {
+			inputFiles = new JsonArray();
+			
+			// Add files from each list of files in "filegroups"
+			StreamSupport.stream(cnmObject.getAsJsonObject("product")
+					.getAsJsonArray("filegroups")
+					.spliterator(), false
+			)
+					.flatMap(fs -> StreamSupport
+							.stream(fs.getAsJsonObject()
+									.getAsJsonArray("files")
+									.spliterator(), false
+							)
+					)
+					.forEach(inputFiles::add);
+		}
+				
 		for (JsonElement file: inputFiles) {
 			JsonObject cnmFile = file.getAsJsonObject();
 
