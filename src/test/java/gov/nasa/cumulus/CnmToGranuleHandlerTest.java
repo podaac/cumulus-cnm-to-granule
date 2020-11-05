@@ -46,7 +46,8 @@ public class CnmToGranuleHandlerTest
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
+        JsonObject inputJson = new JsonParser().parse(input).getAsJsonObject();
         CnmToGranuleHandler c = new CnmToGranuleHandler();
         try {
             String output = c.PerformFunction(input, null);
@@ -55,6 +56,19 @@ public class CnmToGranuleHandlerTest
             JsonElement jelement = new JsonParser().parse(output);
             JsonObject outputKey = jelement.getAsJsonObject().get("output").getAsJsonObject();
             JsonObject granule = outputKey.getAsJsonArray("granules").get(0).getAsJsonObject().getAsJsonObject();
+    
+            assert granule.has("version");
+            assert granule.get("version").getAsString().equals(inputJson.getAsJsonObject("config")
+                    .getAsJsonObject("collection")
+                    .get("version")
+                    .getAsString());
+    
+            assert granule.getAsJsonObject().has("dataType");
+            assert granule.get("dataType").getAsString().equals(inputJson.getAsJsonObject("config")
+                    .getAsJsonObject("collection")
+                    .get("name")
+                    .getAsString());
+							
             assertEquals("product_0001-of-0019", granule.get("granuleId").getAsString());
             JsonArray files = granule.get("files").getAsJsonArray();
             assertEquals(2, files.size());
@@ -79,5 +93,24 @@ public class CnmToGranuleHandlerTest
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+	
+	/**
+	 * Test that PerformFunction functions as expected when provided a CNM with filegroups
+	 */
+	public void testPerformFunctionFilegroups() throws Exception {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File inputJsonFile = new File(classLoader.getResource("inputFilegroups.json").getFile());
+		File expectedJsonFile = new File(classLoader.getResource("expectedFilegroups.json").getFile());
+		
+		String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+		String expected = new String(Files.readAllBytes(expectedJsonFile.toPath()));
+		JsonObject expectedJson = new JsonParser().parse(expected).getAsJsonObject();
+		
+		CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+		String output = cnmToGranuleHandler.PerformFunction(input, null);
+		JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+		
+		assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
     }
 }
