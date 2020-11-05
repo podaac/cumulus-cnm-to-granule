@@ -133,6 +133,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 		JsonArray files = new JsonArray();
 		granule.addProperty("granuleId", granuleId);
+		granule.addProperty("version", config.getAsJsonObject("collection").get("version").getAsString());
+		granule.addProperty("dataType", config.getAsJsonObject("collection").get("name").getAsString());
 
 		JsonArray inputFiles = cnmObject.getAsJsonObject("product").getAsJsonArray("files");
 		

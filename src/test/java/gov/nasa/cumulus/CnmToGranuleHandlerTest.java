@@ -46,7 +46,8 @@ public class CnmToGranuleHandlerTest
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
+        JsonObject inputJson = new JsonParser().parse(input).getAsJsonObject();
         CnmToGranuleHandler c = new CnmToGranuleHandler();
         try {
             String output = c.PerformFunction(input, null);
@@ -55,6 +56,19 @@ public class CnmToGranuleHandlerTest
             JsonElement jelement = new JsonParser().parse(output);
             JsonObject outputKey = jelement.getAsJsonObject().get("output").getAsJsonObject();
             JsonObject granule = outputKey.getAsJsonArray("granules").get(0).getAsJsonObject().getAsJsonObject();
+    
+            assert granule.has("version");
+            assert granule.get("version").getAsString().equals(inputJson.getAsJsonObject("config")
+                    .getAsJsonObject("collection")
+                    .get("version")
+                    .getAsString());
+    
+            assert granule.getAsJsonObject().has("dataType");
+            assert granule.get("dataType").getAsString().equals(inputJson.getAsJsonObject("config")
+                    .getAsJsonObject("collection")
+                    .get("name")
+                    .getAsString());
+							
             assertEquals("product_0001-of-0019", granule.get("granuleId").getAsString());
             JsonArray files = granule.get("files").getAsJsonArray();
             assertEquals(2, files.size());

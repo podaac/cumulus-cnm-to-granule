@@ -2,6 +2,8 @@
   "granules": [
     {
       "granuleId": "HLS.S30.T19XEL.2020116T195901.v1.5",
+      "version": "1",
+      "dataType": "L2_HR_LAKE_AVG",
       "files": [
         {
           "name": "HLS.S30.T19XEL.2020116T195901.v1.5.B08.tif",
