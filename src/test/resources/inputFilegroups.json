@@ -178,7 +178,7 @@
           "bucket": "protected"
         }
       ],
-      "name": "HLS.S30.T19XEL.2020116T195901.v1.5",
+      "name": "L2_HR_LAKE_AVG",
       "granuleIdExtraction": "^(.*)((\\.cmr\\.xml)|(\\.tif)|(\\.jpg))$",
       "granuleId": "^.*$",
       "dataType": "L2_HR_LAKE_AVG",
