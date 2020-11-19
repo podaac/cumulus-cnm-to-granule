@@ -7,14 +7,19 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import gov.nasa.cumulus.gov.nasa.cumulus.bo.ExtraFileFileds;
+import gov.nasa.cumulus.utils.ResponseUriDecoder;
 import org.apache.commons.io.IOUtils;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+
 
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -122,7 +127,9 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		// Parse config values
 		JsonObject config = inputKey.getAsJsonObject("config");
 		String granuleIdExtraction = config.getAsJsonObject("collection").get("granuleIdExtraction").getAsString();
-
+		String distribution_endpoint = ObjectUtils.isNotEmpty(config.get("distribution_endpoint")) ?
+				StringUtils.trim(config.get("distribution_endpoint").getAsString()) : "";
+		AdapterLogger.LogInfo(this.className + " distribution_endpoint: " + distribution_endpoint);
 		String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
 		granuleId = granuleId.substring(granuleId.indexOf("/")+1);
 		Pattern pattern = Pattern.compile(granuleIdExtraction);
@@ -158,7 +165,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 				
 		for (JsonElement file: inputFiles) {
 			JsonObject cnmFile = file.getAsJsonObject();
-
+			boolean isCNMResponseFileObject = this.containProviderDownloadUri(cnmFile, distribution_endpoint);
 			String uri = cnmFile.get("uri").getAsString();
 			AdapterLogger.LogInfo(this.className + " uri: " + uri);
 			String path = uri.replace("s3://", "");
@@ -179,6 +186,17 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 				granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
 			}
 			granuleFile.addProperty("type", cnmFile.get("type").getAsString());
+
+
+			// If this translator receiving input as CNMResponse "style".  That is, this translator is being used
+			// to translate CNM Response message to granules.
+			if (isCNMResponseFileObject && ObjectUtils.isNotEmpty(cnmFile.get("uri"))) {
+				ResponseUriDecoder decoder = new ResponseUriDecoder();
+				ExtraFileFileds extra = decoder.process(cnmFile.get("uri").getAsString(), distribution_endpoint);
+				granuleFile.addProperty("bucket", extra.getBucket());
+				granuleFile.addProperty("filename", extra.getFilename());
+				granuleFile.addProperty("filepath", extra.getFilepath());
+			}
 
 			files.add(granuleFile);
 		}
@@ -204,8 +222,16 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 
 		String outp = new Gson().toJson(output);
 		AdapterLogger.LogDebug(this.className + " PerformFunction output : " + outp);
-
 		return outp;
 	}
+
+	boolean containProviderDownloadUri(JsonObject file, String distribution_endpoint) {
+			if (ObjectUtils.allNotNull(file, file.get("uri"))){
+				String uri = StringUtils.trim(file.get("uri").getAsString());
+				return StringUtils.contains(uri, distribution_endpoint);
+			}
+			return false;
+	}
+
 
 }

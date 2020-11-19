@@ -113,4 +113,14 @@ public class CnmToGranuleHandlerTest
 		
 		assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
     }
+
+    public void testCnmResponseMessage() throws Exception{
+        ClassLoader classLoader = getClass().getClassLoader();
+        File inputJsonFile = new File(classLoader.getResource("input_CNMResponse.json").getFile());
+        String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+        CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+        String output = cnmToGranuleHandler.PerformFunction(input, null);
+        JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+        assertEquals((output.length() > 0), true);
+    }
 }
