@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    - Added support for filegroups in input CNM message
 - **PODAAC-2639**
    - Added dataType and version to output message
+- **PODAAC-2572**
+   - Enhance code so it will also translate message from CNMResponse to granules.
 ### Changed
 - **PODAAC-2553**
   - Upgrade aws s3 dependency to com.amazonaws:aws-java-sdk-s3@1.11.660 to fix Snyk errors

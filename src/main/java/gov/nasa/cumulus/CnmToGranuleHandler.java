@@ -225,8 +225,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		return outp;
 	}
 
-	boolean containProviderDownloadUri(JsonObject file, String distribution_endpoint) {
-			if (ObjectUtils.allNotNull(file, file.get("uri"))){
+	public boolean containProviderDownloadUri(JsonObject file, String distribution_endpoint) {
+			if (ObjectUtils.allNotNull(file, file.get("uri")) && StringUtils.isNotEmpty(distribution_endpoint)){
 				String uri = StringUtils.trim(file.get("uri").getAsString());
 				return StringUtils.contains(uri, distribution_endpoint);
 			}
