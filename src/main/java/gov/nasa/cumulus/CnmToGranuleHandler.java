@@ -162,10 +162,11 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 					)
 					.forEach(inputFiles::add);
 		}
-				
+		/** if 'response' object is presented , this is a response message */
+		boolean isCNMResponseFileObject = ObjectUtils.isNotEmpty(cnmObject.getAsJsonObject("response"));
+		AdapterLogger.LogInfo(this.className + " isCNMResponseFileObject:" + isCNMResponseFileObject);
 		for (JsonElement file: inputFiles) {
 			JsonObject cnmFile = file.getAsJsonObject();
-			boolean isCNMResponseFileObject = this.containProviderDownloadUri(cnmFile, distribution_endpoint);
 			String uri = cnmFile.get("uri").getAsString();
 			AdapterLogger.LogInfo(this.className + " uri: " + uri);
 			String path = uri.replace("s3://", "");
@@ -195,7 +196,6 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 				ExtraFileFileds extra = decoder.process(cnmFile.get("uri").getAsString(), distribution_endpoint);
 				granuleFile.addProperty("bucket", extra.getBucket());
 				granuleFile.addProperty("filename", extra.getFilename());
-				granuleFile.addProperty("filepath", extra.getFilepath());
 			}
 
 			files.add(granuleFile);
@@ -224,14 +224,5 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 		AdapterLogger.LogDebug(this.className + " PerformFunction output : " + outp);
 		return outp;
 	}
-
-	public boolean containProviderDownloadUri(JsonObject file, String distribution_endpoint) {
-			if (ObjectUtils.allNotNull(file, file.get("uri")) && StringUtils.isNotEmpty(distribution_endpoint)){
-				String uri = StringUtils.trim(file.get("uri").getAsString());
-				return StringUtils.contains(uri, distribution_endpoint);
-			}
-			return false;
-	}
-
 
 }

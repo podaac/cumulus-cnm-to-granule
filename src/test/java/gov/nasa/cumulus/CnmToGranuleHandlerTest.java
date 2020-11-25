@@ -127,22 +127,9 @@ public class CnmToGranuleHandlerTest
         JsonElement file1 = files.get(0);
         assertEquals(file1.getAsJsonObject().get("filename").getAsString(), "s3://dyen-cumulus-protected/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc");
         assertEquals(file1.getAsJsonObject().get("bucket").getAsString(), "dyen-cumulus-protected");
-        assertEquals(file1.getAsJsonObject().get("filepath").getAsString(), "JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc");
         JsonElement file2 = files.get(1);
         assertEquals(file2.getAsJsonObject().get("filename").getAsString(), "s3://dyen-cumulus-public/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json");
         assertEquals(file2.getAsJsonObject().get("bucket").getAsString(), "dyen-cumulus-public");
-        assertEquals(file2.getAsJsonObject().get("filepath").getAsString(), "JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json");
     }
 
-    public void testcontainProviderDownloadUri() throws Exception{
-
-        CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
-        JsonObject file =  new JsonObject();
-        file.addProperty("uri", "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/dyen-cumulus-protected/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc");
-        file.addProperty("distribution_endpoint", "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/");
-        boolean isCNMResponseStyle = cnmToGranuleHandler.containProviderDownloadUri(file, "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/");
-        assertEquals(isCNMResponseStyle, true);
-        isCNMResponseStyle = cnmToGranuleHandler.containProviderDownloadUri(file, "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9900/DEV/");
-        assertEquals(isCNMResponseStyle, false);
-    }
 }

@@ -24,7 +24,16 @@
           "size": 1471
         }
       ]
-    }
+    },
+    "receivedTime": "2020-11-24T23:34:43.196Z",
+    "response": {
+      "status": "SUCCESS",
+      "ingestionMetadata": {
+        "catalogId": "G1238598898-POCUMULUS",
+        "catalogUrl": "https://cmr.uat.earthdata.nasa.gov/search/granules.json?concept_id=G1238598898-POCUMULUS"
+      }
+    },
+    "processCompleteTime": "2020-11-24T23:37:02.864Z"
   },
   "config": {
     "distribution_endpoint": "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/",
