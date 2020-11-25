@@ -23,12 +23,6 @@ public class ResponseUriDecoder {
             bucketFolderFilename = StringUtils.substring(bucketFolderFilename, 1); // remove first character
         String[] array = StringUtils.splitByWholeSeparator(bucketFolderFilename, "/");
         extra.setBucket(array[0]);
-        // To construct the filepath, first remove the bucket name, then removing leading slash by
-        // doing a substring from starting index =1
-        if(array.length >= 3) { // uri at least includes bucket, folder and filename at least
-            extra.setFilepath(StringUtils.substring(StringUtils.removeIgnoreCase(bucketFolderFilename, extra.getBucket()),
-                    1));
-        }
         return extra;
     }
 }

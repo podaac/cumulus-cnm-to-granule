@@ -3,7 +3,6 @@ package gov.nasa.cumulus.gov.nasa.cumulus.bo;
 public class ExtraFileFileds {
     String bucket;
     String filename;
-    String filepath;
 
     public String getBucket() {
         return bucket;
@@ -20,14 +19,5 @@ public class ExtraFileFileds {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-
-    public String getFilepath() {
-        return filepath;
-    }
-
-    public void setFilepath(String filepath) {
-        this.filepath = filepath;
-    }
-
 
 }
