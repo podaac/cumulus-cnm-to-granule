@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import gov.nasa.cumulus.gov.nasa.cumulus.bo.ExtraFileFileds;
+import gov.nasa.cumulus.bo.ExtraFileFields;
 import gov.nasa.cumulus.utils.ResponseUriDecoder;
 import org.apache.commons.io.IOUtils;
 
@@ -193,9 +193,10 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 			// to translate CNM Response message to granules.
 			if (isCNMResponseFileObject && ObjectUtils.isNotEmpty(cnmFile.get("uri"))) {
 				ResponseUriDecoder decoder = new ResponseUriDecoder();
-				ExtraFileFileds extra = decoder.process(cnmFile.get("uri").getAsString(), distribution_endpoint);
+				ExtraFileFields extra = decoder.process(cnmFile.get("uri").getAsString(), distribution_endpoint);
 				granuleFile.addProperty("bucket", extra.getBucket());
 				granuleFile.addProperty("filename", extra.getFilename());
+				granuleFile.addProperty("path", extra.getFilepath());
 			}
 
 			files.add(granuleFile);
