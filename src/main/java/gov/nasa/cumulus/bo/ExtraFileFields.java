@@ -1,8 +1,9 @@
-package gov.nasa.cumulus.gov.nasa.cumulus.bo;
+package gov.nasa.cumulus.bo;
 
-public class ExtraFileFileds {
+public class ExtraFileFields {
     String bucket;
     String filename;
+    String filepath;
 
     public String getBucket() {
         return bucket;
@@ -20,4 +21,11 @@ public class ExtraFileFileds {
         this.filename = filename;
     }
 
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
 }

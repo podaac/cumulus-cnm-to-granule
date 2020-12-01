@@ -125,11 +125,13 @@ public class CnmToGranuleHandlerTest
         JsonElement granule = granules.get(0);
         JsonArray files = granule.getAsJsonObject().getAsJsonArray("files");
         JsonElement file1 = files.get(0);
-        assertEquals(file1.getAsJsonObject().get("filename").getAsString(), "s3://dyen-cumulus-protected/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc");
-        assertEquals(file1.getAsJsonObject().get("bucket").getAsString(), "dyen-cumulus-protected");
+        assertEquals("s3://dyen-cumulus-protected/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc", file1.getAsJsonObject().get("filename").getAsString());
+        assertEquals("dyen-cumulus-protected", file1.getAsJsonObject().get("bucket").getAsString());
+        assertEquals("JASON-1_L2_OST_GPN_E", file1.getAsJsonObject().get("path").getAsString());
         JsonElement file2 = files.get(1);
-        assertEquals(file2.getAsJsonObject().get("filename").getAsString(), "s3://dyen-cumulus-public/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json");
-        assertEquals(file2.getAsJsonObject().get("bucket").getAsString(), "dyen-cumulus-public");
+        assertEquals("s3://dyen-cumulus-public/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json", file2.getAsJsonObject().get("filename").getAsString());
+        assertEquals("dyen-cumulus-public", file2.getAsJsonObject().get("bucket").getAsString());
+        assertEquals("JASON-1_L2_OST_GPN_E", file2.getAsJsonObject().get("path").getAsString());
     }
 
 }
