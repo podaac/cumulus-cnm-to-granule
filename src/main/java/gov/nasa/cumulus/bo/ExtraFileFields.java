@@ -5,6 +5,11 @@ public class ExtraFileFields {
     String filename;
     String filepath;
 
+    /**
+     * S3 bucket
+     *
+     * @return S3 bucket
+     */
     public String getBucket() {
         return bucket;
     }
@@ -13,6 +18,11 @@ public class ExtraFileFields {
         this.bucket = bucket;
     }
 
+    /**
+     * Full S3 URI to file
+     *
+     * @return full S3 URI to file
+     */
     public String getFilename() {
         return filename;
     }
@@ -21,6 +31,11 @@ public class ExtraFileFields {
         this.filename = filename;
     }
 
+    /**
+     * S3 directories to file
+     *
+     * @return S3 directories to file excluding bucket and filename
+     */
     public String getFilepath() {
         return filepath;
     }

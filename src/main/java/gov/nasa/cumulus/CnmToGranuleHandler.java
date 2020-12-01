@@ -162,7 +162,7 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 					)
 					.forEach(inputFiles::add);
 		}
-		/** if 'response' object is presented , this is a response message */
+		// if 'response' object is present, then this is a response message
 		boolean isCNMResponseFileObject = ObjectUtils.isNotEmpty(cnmObject.getAsJsonObject("response"));
 		AdapterLogger.LogInfo(this.className + " isCNMResponseFileObject:" + isCNMResponseFileObject);
 		for (JsonElement file: inputFiles) {

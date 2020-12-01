@@ -7,6 +7,13 @@ import org.apache.commons.lang3.StringUtils;
 public class ResponseUriDecoder {
     String className = this.getClass().getName();
 
+    /**
+     * Returns ExtraFileFields object containing bucket, filename, filepath from a direct download link
+     *
+     * @param uri                   direct download link to file
+     * @param distribution_endpoint distribution endpoint to be removed from uri
+     * @return ExtraFileFields object
+     */
     public ExtraFileFields process(String uri, String distribution_endpoint) {
         uri = StringUtils.trim(uri);
         distribution_endpoint =  StringUtils.trim(distribution_endpoint);
