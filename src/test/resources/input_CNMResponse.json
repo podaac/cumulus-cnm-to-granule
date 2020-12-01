@@ -1,0 +1,79 @@
+{
+  "input": {
+    "version": "v1.0",
+    "provider": "PODAAC",
+    "deliveryTime": "2018-03-12T16:50:23.458100",
+    "collection": "L2_HR_LAKE_AVG",
+    "identifier": "c5c828ac328c97b5d3d1036d08898b30-12",
+    "product": {
+      "name": "L2_HR_LAKE_AVG/product_0001-of-0019.h5",
+      "dataVersion": "1",
+      "files": [
+        {
+          "type": "data",
+          "name": "JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc",
+          "uri": "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/dyen-cumulus-protected/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.nc",
+          "checksumType": "md5",
+          "checksum": "4aafb2258c52d1f848e917905e305666",
+          "size": 1679612
+        },
+        {
+          "type": "metadata",
+          "name": "JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json",
+          "uri": "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/dyen-cumulus-public/JASON-1_L2_OST_GPN_E/JA1_GPN_2PeP001_003_20020115_070317_20020115_075921.cmr.json",
+          "size": 1471
+        }
+      ]
+    },
+    "receivedTime": "2020-11-24T23:34:43.196Z",
+    "response": {
+      "status": "SUCCESS",
+      "ingestionMetadata": {
+        "catalogId": "G1238598898-POCUMULUS",
+        "catalogUrl": "https://cmr.uat.earthdata.nasa.gov/search/granules.json?concept_id=G1238598898-POCUMULUS"
+      }
+    },
+    "processCompleteTime": "2020-11-24T23:37:02.864Z"
+  },
+  "config": {
+    "distribution_endpoint": "https://jh72u371y2.execute-api.us-west-2.amazonaws.com:9000/DEV/",
+    "collection": {
+      "files": [
+        {
+          "regex": ".*.h5$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0050.h5",
+          "type": "data",
+          "bucket": "protected"
+        },
+        {
+          "regex": ".*.iso.xml$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0019.iso.xml",
+          "type": "metadata",
+          "bucket": "protected"
+        },
+        {
+          "regex": ".*.cmr.json$",
+          "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0019.cmr.json",
+          "type": "metadata",
+          "bucket": "public"
+        }
+      ],
+      "name": "L2_HR_LAKE_AVG",
+      "granuleIdExtraction": "^(.*)((\\.cmr\\.json)|(\\.h5)|(\\.h5\\.mp))$",
+      "granuleId": "^.*$",
+      "dataType": "L2_HR_LAKE_AVG",
+      "provider_path": "L2_HR_LAKE_AVG/",
+      "version": "1",
+      "updatedAt": 1552434051881,
+      "duplicateHandling": "replace",
+      "sampleFileName": "L2_HR_LAKE_AVG_product_0001-of-0050.h5",
+      "createdAt": 1552434051881,
+      "meta": {
+        "required-files": [
+          ".*.h5$",
+          ".*.iso.xml$"
+        ]
+      }
+    }
+  }
+}
