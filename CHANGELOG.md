@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 ### Security
+- **Snyk**
+  - Upgrade aws-java-sdk-s3@1.11.893 to com.amazonaws:aws-java-sdk-s3@1.11.903
 
 ## [v1.4.1] - 2020-11-19
 ### Added
