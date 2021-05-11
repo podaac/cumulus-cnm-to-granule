@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Added
+- **PODAAC-3208**
+    - add 'source_bucket' key
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+- **Snyk**
+    - Upgrade aws-java-sdk-s3@1.11.955 to com.amazonaws:aws-java-sdk-s3@1.11.1005
+
 ## [v1.4.3] - 2021-02-17
 ### Added
 ### Changed
