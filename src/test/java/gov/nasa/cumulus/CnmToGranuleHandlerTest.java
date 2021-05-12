@@ -89,6 +89,7 @@ public class CnmToGranuleHandlerTest
                 }
                 assertEquals("L2_HR_LAKE_AVG", fileObj.get("path").getAsString());
                 assertEquals("podaac-dev-cumulus-test-input", fileObj.get("bucket").getAsString());
+                assertEquals("podaac-dev-cumulus-test-input", fileObj.get("source_bucket").getAsString());
             }
         } catch(Exception e) {
             e.printStackTrace();

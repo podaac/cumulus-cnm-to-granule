@@ -171,6 +171,8 @@ public class CnmToGranuleHandler implements  ITask, RequestHandler<String, Strin
 			granuleFile.addProperty("path", url_path);
 			granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
 			granuleFile.addProperty("bucket", bucket);
+			// PODAAC-3208 - add 'source_bucket' key
+            granuleFile.addProperty("source_bucket", bucket);
 			granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
 			if (cnmFile.has("checksumType")) {
 				granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
