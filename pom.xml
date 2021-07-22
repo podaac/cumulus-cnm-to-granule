@@ -4,7 +4,7 @@
 
   <groupId>gov.nasa.cumulus</groupId>
   <artifactId>cnm-to-granule</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>cnm-to-granule</name>
@@ -37,7 +37,7 @@
 <dependency>
     <groupId>com.amazonaws</groupId>
     <artifactId>aws-java-sdk-s3</artifactId>
-    <version>1.11.1016</version>
+    <version>1.12.28</version>
 </dependency>
 <dependency>
     <groupId>commons-io</groupId>
