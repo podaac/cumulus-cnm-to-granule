@@ -4,7 +4,7 @@
 
   <groupId>gov.nasa.cumulus</groupId>
   <artifactId>cnm-to-granule</artifactId>
-  <version>1.4.3</version>
+  <version>1.4.4-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>cnm-to-granule</name>
@@ -32,7 +32,7 @@
 <dependency>
   <groupId>gov.nasa.earthdata</groupId>
   <artifactId>cumulus-message-adapter</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.5</version>
 </dependency>
 <dependency>
     <groupId>com.amazonaws</groupId>
