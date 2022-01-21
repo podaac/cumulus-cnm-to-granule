@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.5.4] - 2022-01-20
+### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+- **PODAAC-4095**
+  - Upgrade to cumulus-message-adapter-java 1.3.9 to address [log4j vulnerability](https://nvd.nist.gov/vuln/detail/CVE-2021-44832)
+- **Snyk**
+  - Upgrade aws-java-sdk-s3@1.12.28 to com.amazonaws:aws-java-sdk-s3@1.12.144
+  - Upgrade com.google.code.gson:gson@2.8.2 to com.google.code.gson:gson@2.8.9
+
 ## [v1.5.3] - 2021-12-22
 ### Added
 ### Changed
