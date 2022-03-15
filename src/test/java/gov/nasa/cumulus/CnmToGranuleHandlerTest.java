@@ -131,4 +131,20 @@ public class CnmToGranuleHandlerTest
 
         assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
     }
+
+    public void testBuildSftpGranuleFile() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File inputJsonFile = new File(classLoader.getResource("sftp_input.json").getFile());
+        File expectedJsonFile = new File(classLoader.getResource("sftp_output.json").getFile());
+
+        String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+        String expected = new String(Files.readAllBytes(expectedJsonFile.toPath()));
+        JsonObject expectedJson = new JsonParser().parse(expected).getAsJsonObject();
+
+        CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+        String output = cnmToGranuleHandler.PerformFunction(input, null);
+        JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+
+        assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
+    }
 }
