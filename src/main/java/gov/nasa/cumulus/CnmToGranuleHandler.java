@@ -153,6 +153,8 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
                 granuleFile = buildS3GranuleFile(cnmFile);
             } else if (StringUtils.beginsWithIgnoreCase(uri, "https://")) {
                 granuleFile = buildHttpsGranuleFile(cnmFile);
+            } else if (StringUtils.beginsWithIgnoreCase(uri, "sftp://")) {
+                granuleFile = buildSftpGranuleFile(cnmFile);
             }
             files.add(granuleFile);
         }
@@ -218,6 +220,27 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         JsonObject granuleFile = new JsonObject();
         granuleFile.addProperty("name", cnmFile.get("name").getAsString());//
         granuleFile.addProperty("path", url_path);//
+        granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
+        if (cnmFile.has("checksumType")) {
+            granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
+        }
+        if (cnmFile.has("checksum")) {
+            granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
+        }
+        granuleFile.addProperty("type", cnmFile.get("type").getAsString());
+        return granuleFile;
+    }
+
+    public JsonObject buildSftpGranuleFile(JsonObject cnmFile){
+        String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
+        AdapterLogger.LogInfo(this.className + " uri: " + uri);
+        String path = uri.replace("sftp://", "");
+        String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
+
+        JsonObject granuleFile = new JsonObject();
+        granuleFile.addProperty("name", cnmFile.get("name").getAsString());
+        granuleFile.addProperty("path", url_path);
+        granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
         granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
         if (cnmFile.has("checksumType")) {
             granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
