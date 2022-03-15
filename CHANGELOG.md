@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - **Snyk**
   - upgrade aws-java-sdk-s3@1.12.144 to aws-java-sdk-s3@1.12.176
-  - manual import jackson-databind@2.13.0 due to @2.12.3 (which has issues) being pulled in by aws-java-sdk-s3 even after version updates
+  - manual import jackson-databind@2.13.2 due to @2.12.3 (which has issues) being pulled in by aws-java-sdk-s3 even after version updates
 
 ## [v1.6.0] - 2021-12-03
 ### Added
