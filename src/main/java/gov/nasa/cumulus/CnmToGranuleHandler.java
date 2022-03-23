@@ -2,13 +2,13 @@ package gov.nasa.cumulus;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.util.StringUtils;
 import com.google.gson.*;
 import cumulus_message_adapter.message_parser.AdapterLogger;
 import cumulus_message_adapter.message_parser.ITask;
 import cumulus_message_adapter.message_parser.MessageAdapterException;
 import cumulus_message_adapter.message_parser.MessageParser;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,8 +101,7 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         AdapterLogger.LogDebug(this.className + " Entered PerformFunction");
 
         //convert CNM to GranuleObject
-        JsonElement jelement = new JsonParser().parse(input);
-        JsonObject inputKey = jelement.getAsJsonObject();
+        JsonObject inputKey = JsonParser.parseString(input).getAsJsonObject();
 
         JsonObject cnmObject = inputKey.getAsJsonObject("input");
 
@@ -147,15 +146,7 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
 
         for (JsonElement file : inputFiles) {
             JsonObject cnmFile = file.getAsJsonObject();
-            JsonObject granuleFile = null;
-            String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
-            if (StringUtils.beginsWithIgnoreCase(uri, "s3://")) {
-                granuleFile = buildS3GranuleFile(cnmFile);
-            } else if (StringUtils.beginsWithIgnoreCase(uri, "https://")) {
-                granuleFile = buildHttpsGranuleFile(cnmFile);
-            } else if (StringUtils.beginsWithIgnoreCase(uri, "sftp://")) {
-                granuleFile = buildSftpGranuleFile(cnmFile);
-            }
+            JsonObject granuleFile = buildGranuleFileObj(cnmFile);
             files.add(granuleFile);
         }
 
@@ -184,21 +175,33 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         return outp;
     }
 
-    public JsonObject buildS3GranuleFile(JsonObject cnmFile) {
-        String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
-        AdapterLogger.LogInfo(this.className + " uri: " + uri);
-        String path = uri.replace("s3://", "");
-        String bucket = path.substring(0, path.indexOf("/"));
-        //TODO What if there is no / in the path name?
-        String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
-
+    public JsonObject buildGranuleFileObj(JsonObject cnmFile) {
         JsonObject granuleFile = new JsonObject();
-        granuleFile.addProperty("name", cnmFile.get("name").getAsString());
-        granuleFile.addProperty("path", url_path);
-        granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
+        String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
+        if (StringUtils.startsWithIgnoreCase(uri, "s3://")) {
+            granuleFile.addProperty("source", "S3");
+        } else if (StringUtils.startsWithIgnoreCase(uri, "https://")) {
+            granuleFile.addProperty("source", "HTTPS");
+        } else if (StringUtils.startsWithIgnoreCase(uri, "sftp://")) {
+            granuleFile.addProperty("source", "SFTP");
+        }
+
+        /**
+         * replace s3://, https:// and sftp:// with regrex case insensitive
+         */
+        String path = uri.replaceFirst("(?i)s3:\\/\\/", "");
+        path = path.replaceFirst("(?i)https:\\/\\/", "");
+        path = path.replaceFirst("(?i)sftp:\\/\\/", "");
+        String bucket = path.substring(0, path.indexOf("/"));
+        path = path.replaceFirst(bucket, "");
+        String key = path.substring(1 );
+
         granuleFile.addProperty("bucket", bucket);
         // PODAAC-3208 - add 'source_bucket' key
         granuleFile.addProperty("source_bucket", bucket);
+        granuleFile.addProperty("key", key);
+        granuleFile.addProperty("fileName", cnmFile.get("name").getAsString());
+
         granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
         if (cnmFile.has("checksumType")) {
             granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
@@ -210,45 +213,4 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         return granuleFile;
     }
 
-    public JsonObject buildHttpsGranuleFile(JsonObject cnmFile){
-        String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
-        AdapterLogger.LogInfo(this.className + " uri: " + uri);
-        String path = uri.replace("https://", "");
-        //find the path by getting character from (first / plus 1) to lastIndex of /
-        String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
-
-        JsonObject granuleFile = new JsonObject();
-        granuleFile.addProperty("name", cnmFile.get("name").getAsString());//
-        granuleFile.addProperty("path", url_path);//
-        granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
-        if (cnmFile.has("checksumType")) {
-            granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
-        }
-        if (cnmFile.has("checksum")) {
-            granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
-        }
-        granuleFile.addProperty("type", cnmFile.get("type").getAsString());
-        return granuleFile;
-    }
-
-    public JsonObject buildSftpGranuleFile(JsonObject cnmFile){
-        String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
-        AdapterLogger.LogInfo(this.className + " uri: " + uri);
-        String path = uri.replace("sftp://", "");
-        String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
-
-        JsonObject granuleFile = new JsonObject();
-        granuleFile.addProperty("name", cnmFile.get("name").getAsString());
-        granuleFile.addProperty("path", url_path);
-        granuleFile.addProperty("url_path", cnmFile.get("uri").getAsString());
-        granuleFile.addProperty("size", cnmFile.get("size").getAsLong());
-        if (cnmFile.has("checksumType")) {
-            granuleFile.addProperty("checksumType", cnmFile.get("checksumType").getAsString());
-        }
-        if (cnmFile.has("checksum")) {
-            granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
-        }
-        granuleFile.addProperty("type", cnmFile.get("type").getAsString());
-        return granuleFile;
-    }
 }

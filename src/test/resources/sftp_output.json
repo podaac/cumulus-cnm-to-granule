@@ -6,16 +6,20 @@
       "dataType": "VIIRS_NPP-NAVO-L2P-v3.0",
       "files": [
         {
-          "name": "20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc",
-          "path": "cumulus-test/gds2/NAVO",
-          "url_path": "sftp://ops-metis.jpl.nasa.gov/cumulus-test/gds2/NAVO/20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc",
+          "source": "SFTP",
+          "bucket": "ops-metis.jpl.nasa.gov",
+          "source_bucket": "ops-metis.jpl.nasa.gov",
+          "key": "cumulus-test/gds2/NAVO/20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc",
+          "fileName": "20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc",
           "size": 16316733,
           "type": "data"
         },
         {
-          "name": "20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc.md5",
-          "path": "cumulus-test/gds2/NAVO",
-          "url_path": "sftp://ops-metis.jpl.nasa.gov/cumulus-test/gds2/NAVO/20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc.md5",
+          "source": "SFTP",
+          "bucket": "ops-metis.jpl.nasa.gov",
+          "source_bucket": "ops-metis.jpl.nasa.gov",
+          "key": "cumulus-test/gds2/NAVO/20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc.md5",
+          "fileName": "20220111135840-NAVO-L2P_GHRSST-SST1m-VIIRS_NPP-v02.0-fv03.0.nc.md5",
           "size": 97,
           "type": "metadata"
         }
