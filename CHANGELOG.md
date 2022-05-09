@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - **PODAAC-4353**
   - Upgrade jackson-databind as well as aws-java-sdk-s3 for Snyk warnings
-  - com.amazonaws:aws-java-sdk-s3@1.12.176 to com.amazonaws:aws-java-sdk-s3@1.12.199
+  - com.amazonaws:aws-java-sdk-s3@1.12.176 to com.amazonaws:aws-java-sdk-s3@1.12.215
   
 ## [v1.7.0] - 2022-03-15
 ### Added
