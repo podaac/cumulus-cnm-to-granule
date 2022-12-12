@@ -5,19 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# [Unreleased]
-### Added
-
-### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
-- **PODAAC-4353**
-  - Upgrade jackson-databind as well as aws-java-sdk-s3 for Snyk warnings
-  - com.amazonaws:aws-java-sdk-s3@1.12.176 to com.amazonaws:aws-java-sdk-s3@1.12.215
-  
-## [v1.7.0] - 2022-03-15
+## [v1.7.0] - 2022-12-12
 ### Added
 - **PODAAC-4308**
   - Support sftp URI from CNM messages
@@ -29,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Snyk**
   - upgrade aws-java-sdk-s3@1.12.144 to aws-java-sdk-s3@1.12.176
   - manual import jackson-databind@2.13.2 due to @2.12.3 (which has issues) being pulled in by aws-java-sdk-s3 even after version updates
+- **PODAAC-4353**
+  - Upgrade jackson-databind as well as aws-java-sdk-s3 for Snyk warnings
+  - com.amazonaws:aws-java-sdk-s3@1.12.176 to com.amazonaws:aws-java-sdk-s3@1.12.215
 
 ## [v1.6.0] - 2021-12-03
 ### Added
