@@ -12,7 +12,7 @@ mvn clean verify sonar:sonar \
  -Dsonar.host.url=http://localhost:9000 \
  -Dsonar.token=sqp_6dc05b1aa1f622b45112927d2a0510f209776860
  
-* Makde sure using java 17 and gradle 8.3
+* Makde sure using java 11 and gradle 8.3
 mvn clean dependency:copy-dependencies
 gradle build
 ```
