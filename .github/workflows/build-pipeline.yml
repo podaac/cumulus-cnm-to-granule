@@ -38,6 +38,19 @@ jobs:
       - name: Extract Maven project version
         run: echo ::set-output name=current_version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
         id: get-version
+      - name: Run Snyk as a blocking step
+        uses: snyk/actions/maven@master
+        env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+            JAVA_HOME: "/opt/java/openjdk"
+        with:
+          command: test
+          args: >
+              --org=${{ secrets.SNYK_ORG_ID }}
+              --project-name=${{ github.repository }}
+              --severity-threshold=high
+              --fail-on=all
+              --file=pom.xml
       - name: Show extracted Maven project version
         run: |
           echo ${{ steps.get-version.outputs.current_version }}
