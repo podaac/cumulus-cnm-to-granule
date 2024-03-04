@@ -209,7 +209,7 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         }
         granuleFile.addProperty("type", cnmFile.get("type").getAsString());
         granuleFile.addProperty("fileName", cnmFile.get("name").getAsString());
-        granuleFile.addProperty("key", url_path);
+        granuleFile.addProperty("key", url_path + '/' + cnmFile.get("name").getAsString());
         return granuleFile;
     }
 
