@@ -208,6 +208,7 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
             granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
         }
         granuleFile.addProperty("type", cnmFile.get("type").getAsString());
+        granuleFile.addProperty("fileName", cnmFile.get("name").getAsString());
         return granuleFile;
     }
 
