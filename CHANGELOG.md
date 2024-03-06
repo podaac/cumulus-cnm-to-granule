@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.0]
 ### Added
+- **User contribution**
+  - Add the "fileName" and "key" properties to the granuleFile object from buildS3GranuleFile function
 ### Changed
 - **PODAAC-5877**
   - Support java 11
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 ### Fixed
 ### Security
+- Snyk: Upgrade com.amazonaws:aws-java-sdk-s3: 1.12.565 -> 1.12.661
 
 ## [v1.7.0] - 2022-12-12
 ### Added
