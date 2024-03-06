@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1]
+### Added
+- **User contribution**
+  - Add the "fileName" and "key" properties to the granuleFile object from buildS3GranuleFile function
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## [1.8.0]
 ### Added
 ### Changed
