@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.0]
 ### Added
+- **User contribution**
+  - Add the "fileName" and "key" properties to the granuleFile object from buildS3GranuleFile function
 ### Changed
 - **PODAAC-5877**
   - Support java 11
