@@ -151,7 +151,8 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
             String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
             if (StringUtils.beginsWithIgnoreCase(uri, "s3://")) {
                 granuleFile = buildS3GranuleFile(cnmFile);
-            } else if (StringUtils.beginsWithIgnoreCase(uri, "https://")) {
+            } else if (StringUtils.beginsWithIgnoreCase(uri, "https://") ||
+                    StringUtils.beginsWithIgnoreCase(uri, "http://")) {
                 granuleFile = buildHttpsGranuleFile(cnmFile);
             } else if (StringUtils.beginsWithIgnoreCase(uri, "sftp://")) {
                 granuleFile = buildSftpGranuleFile(cnmFile);
@@ -207,6 +208,10 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
             granuleFile.addProperty("checksum", cnmFile.get("checksum").getAsString());
         }
         granuleFile.addProperty("type", cnmFile.get("type").getAsString());
+
+        // Add the "fileName" and "key" properties as listed in the later version of the cumulus granule file schema
+        granuleFile.addProperty("fileName", cnmFile.get("name").getAsString());
+        granuleFile.addProperty("key", url_path + '/' + cnmFile.get("name").getAsString());
         return granuleFile;
     }
 
@@ -214,6 +219,7 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         String uri = StringUtils.trim(cnmFile.get("uri").getAsString());
         AdapterLogger.LogInfo(this.className + " uri: " + uri);
         String path = uri.replace("https://", "");
+        path = path.replace("http://", ""); // Work-a-around to working with http links also
         //find the path by getting character from (first / plus 1) to lastIndex of /
         String url_path = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
 
