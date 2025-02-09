@@ -1,3 +1,13 @@
+## [v2.0.0] - 2025-02-09
+### Added
+### Changed
+  - Version update in pom.xml, release.md, CHANGELOG.MD
+  - token update
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## [v1.6.0] - 2021-12-03
 ### Added
 - **PODAAC-4012**
