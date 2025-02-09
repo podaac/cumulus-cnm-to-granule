@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 ### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [2.0.0]
+### Added
+### Changed
 - **PODAAC-6185**
   - java 11 -> 17
 ### Deprecated
@@ -15,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Security
 - Snyk: Upgrade com.amazonaws:aws-java-sdk-s3: 1.12.565 -> 1.12.661
-
 
 ## [1.8.0]
 ### Added
