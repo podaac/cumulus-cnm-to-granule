@@ -5,7 +5,7 @@
 ### Added
 ### Changed
 - **PODAAC-7411**
-  - Upgrade to java 25
+  - Upgrade to java 21
 ### Deprecated
 ### Removed
 ### Fixed

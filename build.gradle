@@ -1,7 +1,7 @@
 apply plugin: 'java'
 tasks.withType(JavaCompile).configureEach {
-    sourceCompatibility = '25'
-    targetCompatibility = '25'
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
 }
 
 dependencies {
