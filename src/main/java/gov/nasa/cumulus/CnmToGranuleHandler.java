@@ -114,7 +114,6 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
         String granuleId = cnmObject.getAsJsonObject("product").get("name").getAsString();
         String producerGranuleId =  cnmObject.getAsJsonObject("product").get("producerGranuleId") !=null ?
                 cnmObject.getAsJsonObject("product").get("producerGranuleId").getAsString():granuleId;
-        AdapterLogger.LogInfo(this.className + "After ? and : ProducerGranuleId: " + producerGranuleId);
         granuleId = granuleId.substring(granuleId.indexOf("/") + 1);
         Pattern pattern = Pattern.compile(granuleIdExtraction);
         Matcher matcher = pattern.matcher(granuleId);
@@ -124,8 +123,8 @@ public class CnmToGranuleHandler implements ITask, RequestHandler<String, String
 
         JsonArray files = new JsonArray();
         granule.addProperty("granuleId", granuleId);
-        AdapterLogger.LogInfo(this.className + " Added ProducerGranuleId: " + granuleId);
         granule.addProperty("producerGranuleId", producerGranuleId);
+        AdapterLogger.LogInfo(this.className + " Added ProducerGranuleId: " + producerGranuleId);
         granule.addProperty("version", config.getAsJsonObject("collection").get("version").getAsString());
         granule.addProperty("dataType", config.getAsJsonObject("collection").get("name").getAsString());
 
