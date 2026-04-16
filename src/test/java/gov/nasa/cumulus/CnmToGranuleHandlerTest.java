@@ -163,4 +163,47 @@ public class CnmToGranuleHandlerTest
 
         assert(expectedJson.equals(outputJson.getAsJsonObject("output")));
     }
+
+    public void testProducerGranuleIdDefaultsToProductNameWhenMissing() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File inputJsonFile = new File(classLoader.getResource("input.json").getFile());
+        String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+        JsonObject inputJson = new JsonParser().parse(input).getAsJsonObject();
+
+        CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+        String output = cnmToGranuleHandler.PerformFunction(input, null);
+        JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+        JsonObject granule = outputJson.getAsJsonObject("output")
+                .getAsJsonArray("granules")
+                .get(0)
+                .getAsJsonObject();
+
+        String expectedProducerGranuleId = inputJson.getAsJsonObject("input")
+                .getAsJsonObject("product")
+                .get("name")
+                .getAsString();
+        assertEquals(expectedProducerGranuleId, granule.get("producerGranuleId").getAsString());
+    }
+
+    public void testProducerGranuleIdUsesProvidedValue() throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File inputJsonFile = new File(classLoader.getResource("input.json").getFile());
+        String input = new String(Files.readAllBytes(inputJsonFile.toPath()));
+        JsonObject inputJson = new JsonParser().parse(input).getAsJsonObject();
+
+        String providedProducerGranuleId = "provider-granule-id-001";
+        inputJson.getAsJsonObject("input")
+                .getAsJsonObject("product")
+                .addProperty("producerGranuleId", providedProducerGranuleId);
+
+        CnmToGranuleHandler cnmToGranuleHandler = new CnmToGranuleHandler();
+        String output = cnmToGranuleHandler.PerformFunction(inputJson.toString(), null);
+        JsonObject outputJson = new JsonParser().parse(output).getAsJsonObject();
+        JsonObject granule = outputJson.getAsJsonObject("output")
+                .getAsJsonArray("granules")
+                .get(0)
+                .getAsJsonObject();
+
+        assertEquals(providedProducerGranuleId, granule.get("producerGranuleId").getAsString());
+    }
 }
