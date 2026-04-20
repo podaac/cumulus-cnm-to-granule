@@ -85,7 +85,7 @@ jobs:
           echo "New Version is: ${{ env.software_version }}"
           python3 builder/builder2.py -d . -a ${{env.ARTIFACT_BASE_NAME}} -v ${{ env.software_version }}
       - name: Set up Snyk
-        uses: snyk/actions/setup@v3
+        uses: snyk/actions/setup@v1
       - name: Snyk Security Scan
         run: snyk test --all-sub-projects --package-manager=gradle --file=build.gradle
         env:
