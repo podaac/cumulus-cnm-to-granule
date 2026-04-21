@@ -11,34 +11,35 @@ on:
 env:
   REGISTRY: ghcr.io
   ARTIFACT_BASE_NAME: cnmToGranule
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   # First job name
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           token: ${{ secrets.GIT_PUSH_TOKEN_VIVIANT }}
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v5
         with:
-          distribution: 'adopt'
-          java-version: '17.0.12'
-      - uses: gradle/gradle-build-action@v1
+          distribution: 'temurin'
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.0.1
-          distributions-cache-enabled: false
-          wrapper-cache-enabled: false
+          gradle-version: 9.1.0
       - name: Install Python 3
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Install Python dependencies
         run: |
           pip3 install -r builder/requirements.txt
       - name: Extract Maven project version
-        run: echo ::set-output name=current_version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        run: echo "current_version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> "$GITHUB_OUTPUT"
         id: get-version
       - name: Show extracted Maven project version
         run: |
@@ -83,8 +84,8 @@ jobs:
         run: |
           echo "New Version is: ${{ env.software_version }}"
           python3 builder/builder2.py -d . -a ${{env.ARTIFACT_BASE_NAME}} -v ${{ env.software_version }}
-      - name: Install Snyk CLI
-        run: npm install -g snyk
+      - name: Set up Snyk
+        uses: snyk/actions/setup@v1
       - name: Snyk Security Scan
         run: snyk test --all-sub-projects --package-manager=gradle --file=build.gradle
         env:
@@ -96,56 +97,33 @@ jobs:
           echo "ARTIFACT_FILE=$artifact_file_name" >> $GITHUB_ENV
           cp release/*.zip "$artifact_file_name"
       - name: Create Release
-        id: create_release
         if: ${{ contains(github.ref, 'master') }}
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "v${{ env.software_version }}"
-          release_name: "Release v${{ env.software_version }} - ${{ github.ref }}"
+          tag_name: v${{ env.software_version }}
+          name: Release v${{ env.software_version }} - ${{ github.ref }}
           body: |
             Changes in this release:
             ${{ github.event.head_commit.message }}
-          body_path: release.md
+          files: ${{ env.ARTIFACT_FILE }}
           draft: false
           prerelease: false
       - name: Create PreRelease
-        id: create_prerelease
         if: ${{ !contains(github.ref, 'master') }}
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "v${{ env.software_version }}"
-          release_name: "Release v${{ env.software_version }} - ${{ github.ref }}"
+          tag_name: v${{ env.software_version }}
+          name: Release v${{ env.software_version }} - ${{ github.ref }}
           body: |
             Changes in this release:
             ${{ github.event.head_commit.message }}
+          files: ${{ env.ARTIFACT_FILE }}
           draft: false
           prerelease: true
-      - name: Upload PreRelease Asset
-        id: upload-prerelease-asset 
-        if: ${{ !contains(github.ref, 'master') }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_prerelease.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: "${{ env.ARTIFACT_FILE }}"
-          asset_name: "${{ env.ARTIFACT_FILE }}"
-          asset_content_type: application/zip
-      - name: Upload Release Asset
-        id: upload-release-asset
-        if: ${{ contains(github.ref, 'master') }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: "${{ env.ARTIFACT_FILE }}"
-          asset_name: "${{ env.ARTIFACT_FILE }}"
-          asset_content_type: application/zip
       - name: Commit Version Bump
         # If building develop, a release branch, or master then we commit the version bump back to the repo
         if: |
