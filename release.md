@@ -1,3 +1,17 @@
+
+
+
+## [2.4.0] - 2026-4-10
+### Added
+### Changed
+- **PODAAC-7411**
+  - Upgrade to java 21
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+
 ## [v2.0.0] - 2025-02-09
 ### Added
 ### Changed
